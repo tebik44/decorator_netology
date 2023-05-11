@@ -1,6 +1,7 @@
 import os
 import logging
 
+from logging.handlers import RotatingFileHandler
 
 # Доработать декоратор logger в коде ниже. Должен получиться декоратор, который записывает в файл 'main.log'
 # дату и время вызова функции, имя функции, аргументы,
@@ -20,8 +21,6 @@ def logger_for_test_1(old_function):
 
 def test_1():
     path = 'main.log'
-    # if os.path.exists(path):
-    #     os.remove(path)
 
     @logger_for_test_2()
     def hello_world():
@@ -60,18 +59,31 @@ def test_1():
 # и время вызова функции, имя функции, аргументы, с которыми вызвалась, и возвращаемое значение. Путь к файлу должен
 # передаваться в аргументах декоратора. Функция test_2 в коде ниже также должна отработать без ошибок.
 count = 0
-def logger_for_test_2(path = "main.log"):
+def logger_for_test_2(paths=None):
     def _logger_for_test_2(old_function):
+        if paths is None:
+            logger_1 = logging.getLogger('main_log.log')
+
+            handler_1 = RotatingFileHandler('main_log.log', backupCount=10, maxBytes=1000000)
+        else:
+            logger_1 = logging.getLogger(paths)
+
+            handler_1 = RotatingFileHandler(paths, backupCount=10, maxBytes=1000000)
+
+        logger_1.setLevel(logging.INFO)
+
+        logger_1.addHandler(handler_1)
+
         def new_function(*args, **kwargs):
             global count
             result = old_function(*args, **kwargs)
-            logging.basicConfig(level=logging.INFO, filename=path, datefmt='%Y-%m-%d %H:%M:%S', filemode="w",
-                                format="%(asctime)s %(levelname)s %(message)s")
+            # logging.basicConfig(level=logging.INFO, filename=path, datefmt='%Y-%m-%d %H:%M:%S', filemode="w",
+            #                     format="%(asctime)s %(levelname)s %(message)s")
             count += 1
-            logging.info(f"Name function: {old_function.__name__} "
-                         f"Arguments: {args, kwargs} "
-                         f"return object: {result}")
-            logging.getLogger()
+            logger_1.info(f"Name function: {old_function.__name__} "
+                          f"Arguments: {args, kwargs} "
+                          f"return object: {result}")
+
             return result
         return new_function
     return _logger_for_test_2
@@ -83,37 +95,37 @@ def test_2():
         if os.path.exists(path):
             os.remove(path)
 
-        @logger_for_test_2(path)
-        def hello_world():
-            return 'Hello World'
+    @logger_for_test_2(paths[0])
+    def hello_world():
+        return 'Hello World'
 
-        @logger_for_test_2(path)
-        def summator(a, b=.0):
-            return a + b
+    @logger_for_test_2(paths[1])
+    def summator(a, b=.0):
+        return a + b
 
-        @logger_for_test_2(path)
-        def div(a, b):
-            return a / b
+    @logger_for_test_2(paths[2])
+    def div(a, b):
+        return a / b
 
-        assert 'Hello World' == hello_world(), "Функция возвращает 'Hello World'"
-        result = summator(2, 2)
-        assert isinstance(result, int), 'Должно вернуться целое число'
-        assert result == 4, '2 + 2 = 4'
-        result = div(6, 2)
-        assert result == 3, '6 / 2 = 3'
-        summator(4.3, b=2.2)
+    assert 'Hello World' == hello_world(), "Функция возвращает 'Hello World'"
+    result = summator(2, 2)
+    assert isinstance(result, int), 'Должно вернуться целое число'
+    assert result == 4, '2 + 2 = 4'
+    result = div(6, 2)
+    assert result == 3, '6 / 2 = 3'
+    summator(4.3, b=2.2)
 
-    for path in paths:
+    assert os.path.exists(paths[0]), f'файл {paths[0]} должен существовать'
+    assert os.path.exists(paths[1]), f'файл {paths[1]} должен существовать'
+    assert os.path.exists(paths[2]), f'файл {paths[2]} должен существовать'
 
-        assert os.path.exists(path), f'файл {path} должен существовать'
+    with open(paths[1]) as log_file:
+        log_file_content = log_file.read()
 
-        with open(path) as log_file:
-            log_file_content = log_file.read()
+    assert 'summator' in log_file_content, 'должно записаться имя функции'
 
-        assert 'summator' in log_file_content, 'должно записаться имя функции'
-
-        for item in (4.3, 2.2, 6.5):
-            assert str(item) in log_file_content, f'{item} должен быть записан в файл'
+    for item in (4.3, 2.2, 6.5):
+        assert str(item) in log_file_content, f'{item} должен быть записан в файл'
 
 
 if __name__ == '__main__':

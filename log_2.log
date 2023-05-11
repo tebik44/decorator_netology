@@ -1,0 +1,2 @@
+Name function: summator Arguments: ((2, 2), {}) return object: 4
+Name function: summator Arguments: ((4.3,), {'b': 2.2}) return object: 6.5

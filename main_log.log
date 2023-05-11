@@ -1,0 +1,15 @@
+Name function: hello_world Arguments: ((), {}) return object: Hello World
+Name function: hello_world Arguments: ((), {}) return object: Hello World
+Name function: hello_world Arguments: ((), {}) return object: Hello World
+Name function: summator Arguments: ((2, 2), {}) return object: 4
+Name function: summator Arguments: ((2, 2), {}) return object: 4
+Name function: summator Arguments: ((2, 2), {}) return object: 4
+Name function: div Arguments: ((6, 2), {}) return object: 3.0
+Name function: div Arguments: ((6, 2), {}) return object: 3.0
+Name function: div Arguments: ((6, 2), {}) return object: 3.0
+Name function: summator Arguments: ((4.3,), {'b': 2.2}) return object: 6.5
+Name function: summator Arguments: ((4.3,), {'b': 2.2}) return object: 6.5
+Name function: summator Arguments: ((4.3,), {'b': 2.2}) return object: 6.5
+Name function: summator Arguments: ((), {'a': 0, 'b': 0}) return object: 0
+Name function: summator Arguments: ((), {'a': 0, 'b': 0}) return object: 0
+Name function: summator Arguments: ((), {'a': 0, 'b': 0}) return object: 0
